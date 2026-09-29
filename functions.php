@@ -18,6 +18,57 @@ define('KJ_COMMENT_MAX_LENGTH', 1000);
 // seconds a comment form stays valid, the page can be open for a while before a comment is written
 define('KJ_COMMENT_FORM_TIME', 3600);
 
+// the comment box of a style that has none of its own
+define('KJ_COMMENT_DEFAULT_STYLE', 'bootstrap');
+
+
+/**
+ * every style has its own comment box, that follows its design, in the plugin folder:
+ * - comment_{style}_style.html       the box: title, form of a new comment and the list
+ * - comment_list_{style}_style.html  the comments of the list, rendered again after every post and delete
+ * - comment_{style}_style.css        optional, loaded in the head of the download page
+ * comment.js works with all of them, see the data-kj-* attributes it needs at its top
+ *
+ * the box of the current style, or the style it depends on, or the default one
+ * @return string style name
+ */
+function kj_comment_style(): string
+{
+    global $config;
+    static $style = null;
+
+    if ($style !== null)
+    {
+        return $style;
+    }
+
+    $style = KJ_COMMENT_DEFAULT_STYLE;
+
+    foreach ([$config['style'] ?? '', $config['style_depend_on'] ?? ''] as $name)
+    {
+        $name = trim((string) $name);
+
+        if ($name !== '' && preg_match('/^[a-z0-9_\-]+$/i', $name) && file_exists(__DIR__ . '/comment_' . $name . '_style.html'))
+        {
+            $style = $name;
+
+            break;
+        }
+    }
+
+    return $style;
+}
+
+/**
+ * template name of a part of the comment box of the current style
+ * @param  string $part '' for the box, 'list' for the comments
+ * @return string
+ */
+function kj_comment_template(string $part = ''): string
+{
+    return 'comment_' . ($part !== '' ? $part . '_' : '') . kj_comment_style() . '_style';
+}
+
 
 /**
  * words of the plugin, added to $olang at install and update
@@ -110,6 +161,23 @@ function kj_comment_asset(string $file): string
 }
 
 /**
+ * link and script tags of the comment box, for the head of the download page
+ * @return string
+ */
+function kj_comment_head_code(): string
+{
+    $code = '';
+    $css  = kj_comment_template() . '.css';
+
+    if (file_exists(__DIR__ . '/' . $css))
+    {
+        $code .= '<link rel="stylesheet" href="' . kj_comment_asset($css) . '">' . "\n";
+    }
+
+    return $code . '<script src="' . kj_comment_asset('comment.js') . '" defer></script>' . "\n";
+}
+
+/**
  * name of the csrf form key, one for every member
  * @return string
  */
@@ -133,23 +201,18 @@ function kj_comment_can_delete(int $author_id): bool
 }
 
 /**
- * first letter of a name and a color from the user id, for the avatar circle
+ * first letter of a name and a hue from the user id, for the avatar circle,
+ * the style gives it the colors, as --kj-hue, so they can follow its light and dark modes
  * @param  string $name html encoded name
  * @param  int    $user_id
- * @return array  [initial, style]
+ * @return array  [initial, hue]
  */
 function kj_comment_avatar(string $name, int $user_id): array
 {
     $plain   = html_entity_decode($name, ENT_QUOTES, 'UTF-8');
     $initial = mb_strtoupper(mb_substr($plain, 0, 1));
 
-    // a light tint and a dark text of the same hue, readable for every hue
-    $hue = ($user_id * 137) % 360;
-
-    return [
-        htmlspecialchars($initial, ENT_QUOTES),
-        "background-color: hsl({$hue}, 70%, 92%); color: hsl({$hue}, 55%, 28%);",
-    ];
+    return [htmlspecialchars($initial, ENT_QUOTES), ($user_id * 137) % 360];
 }
 
 /**
@@ -165,7 +228,7 @@ function kj_comment_user_link(int $user_id): string
 }
 
 /**
- * comments of a file, newest first, ready for comment_list.html
+ * comments of a file, newest first, ready for the comment_list_{style}_style.html templates
  * @param  int   $file_id
  * @return array
  */
@@ -194,7 +257,7 @@ function kj_comment_fetch(int $file_id): array
 
     while ($row = $SQL->fetch($query))
     {
-        [$initial, $avatar_style] = kj_comment_avatar($row['name'], (int) $row['user']);
+        [$initial, $avatar_hue] = kj_comment_avatar($row['name'], (int) $row['user']);
 
         $comments[] = [
             'id'           => (int) $row['id'],
@@ -202,7 +265,7 @@ function kj_comment_fetch(int $file_id): array
             'name'         => $row['name'],
             'comment'      => $row['comment'],
             'initial'      => $initial,
-            'avatar_style' => $avatar_style,
+            'avatar_hue'   => $avatar_hue,
             'user_link'    => kj_comment_user_link((int) $row['user']),
             'time'         => kleeja_date((int) $row['time']),
             'full_time'    => kleeja_date((int) $row['time'], false),
@@ -216,7 +279,7 @@ function kj_comment_fetch(int $file_id): array
 }
 
 /**
- * form actions and a fresh csrf key, used by comment.html and comment_list.html
+ * form actions and a fresh csrf key, used by the templates of the comment box
  */
 function kj_comment_assign_forms(): void
 {
@@ -228,7 +291,7 @@ function kj_comment_assign_forms(): void
 }
 
 /**
- * the list items of the comments, the same html for the page and the ajax answers
+ * the comments of the list, the same html for the page and the ajax answers
  * @param  array  $comments
  * @return string
  */
@@ -239,7 +302,7 @@ function kj_comment_list_html(array $comments): string
     $tpl->assign('kj_comments', $comments);
     $tpl->assign('kj_comments_count', count($comments));
 
-    return $tpl->display('comment_list', __DIR__);
+    return $tpl->display(kj_comment_template('list'), __DIR__);
 }
 
 /**

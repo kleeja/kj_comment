@@ -1,5 +1,5 @@
 /**
- * kj_comment: the comments box under the download page
+ * kj_comment: the comment box of the bootstrap style, under the download page
  * On top of Bootstrap 4 of the bootstrap style, only what its classes do not give.
  * Logical properties (inline-start/end) keep it right in rtl and ltr.
  */
@@ -34,7 +34,7 @@
     font-size: 0.8rem;
 }
 
-/* avatar: first letter of the name, the colors are set by the plugin for every user */
+/* avatar: first letter of the name, a light tint and a dark text of the hue of every user (--kj-hue) */
 .kj-avatar {
     display: inline-flex;
     align-items: center;
@@ -48,6 +48,8 @@
     line-height: 1;
     text-decoration: none !important;
     user-select: none;
+    background-color: hsl(var(--kj-hue, 210) 70% 92%);
+    color: hsl(var(--kj-hue, 210) 55% 28%);
 }
 
 /* the form of a new comment */
@@ -81,6 +83,10 @@
     margin-top: 0.5rem;
 }
 
+.kj-counter.is-limit {
+    color: #dc3545;
+}
+
 .kj-guest {
     display: flex;
     flex-wrap: wrap;
@@ -103,6 +109,11 @@
 
 .is-busy .kj-spinner {
     display: inline-block;
+}
+
+/* the send arrow points the way of the text */
+[dir='rtl'] .kj-send-icon {
+    transform: scaleX(-1);
 }
 
 .kj-delete .kj-spinner {

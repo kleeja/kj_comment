@@ -1,7 +1,24 @@
 /*
  * kj_comment: posts and deletes comments without reloading the download page.
- * The server answers with the new list of comments (the same comment_list.html of the page) and a new form key.
+ * The server answers with the new list of comments (the comment_list_{style}_style.html of the page) and a new form key.
  * Without JavaScript the forms are posted as usual and the page is reloaded.
+ *
+ * It works with the comment box of every style, the box only needs these:
+ * - #kj-comments                  the box, with
+ *     data-confirm-delete         question before deleting a comment
+ *     data-error                  message when the server can not be reached
+ *     data-alert-success          classes of a success message, like "alert alert-success"
+ *     data-alert-danger           classes of an error message
+ * - [data-kj-form]                form of a new comment, with its textarea and submit button (guests have none)
+ * - [data-kj-counter]             optional, "0 / 1000" of the textarea
+ * - [data-kj-count]               number of the comments
+ * - [data-kj-status]              where the messages are shown
+ * - [data-kj-list]                the comments, replaced by the list of every answer
+ * - [data-kj-comment="id"]        a comment of the list
+ * - form[data-kj-delete]          delete form of a comment
+ * and the style gives these classes a look:
+ * - .is-busy on a button waiting for the server, .is-limit on the counter near the limit,
+ *   .is-new on the comment just posted, .is-removing on the comment being deleted
  */
 (function () {
     'use strict';
@@ -23,7 +40,7 @@
         var alert = document.createElement('div');
 
         clearTimeout(hideTimer);
-        alert.className = 'alert alert-' + type;
+        alert.className = box.getAttribute('data-alert-' + type) || 'kj-alert kj-alert-' + type;
         alert.textContent = message;
         status.textContent = '';
         status.appendChild(alert);
@@ -125,8 +142,11 @@
         var updateCounter = function () {
             var length = textarea.value.length;
 
-            counter.textContent = length + ' / ' + max;
-            counter.classList.toggle('text-danger', max > 0 && length >= max * 0.9);
+            if (counter) {
+                counter.textContent = length + ' / ' + max;
+                counter.classList.toggle('is-limit', max > 0 && length >= max * 0.9);
+            }
+
             submit.disabled = textarea.value.trim() === '' || submit.classList.contains('is-busy');
         };
 

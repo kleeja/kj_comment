@@ -114,21 +114,19 @@ $kleeja_plugin['kj_comment']['functions'] = [
         return compact('kj_comments', 'kj_comment_file_id');
     },
 
-    // style and script of the comments box, only on the download page
+    // style and script of the comment box, only on the download page
     'Saaheader_links_func' => function ($args) {
         if (! defined('KJ_COMMENT_DISPLAY'))
         {
             return;
         }
 
-        $extra = $args['extra']
-            . '<link rel="stylesheet" href="' . kj_comment_asset('comment.css') . '">' . "\n"
-            . '<script src="' . kj_comment_asset('comment.js') . '" defer></script>' . "\n";
+        $extra = $args['extra'] . kj_comment_head_code();
 
         return compact('extra');
     },
 
-    // the comments box, before the footer of the download page
+    // the comment box of the current style, before the footer of the download page
     'print_Saafooter_func' => function ($args) {
         global $tpl , $usrcp , $config , $kj_comments;
 
@@ -146,14 +144,14 @@ $kleeja_plugin['kj_comment']['functions'] = [
 
         if ($usrcp->name())
         {
-            [$initial, $avatar_style] = kj_comment_avatar($usrcp->name(), (int) $usrcp->id());
+            [$initial, $avatar_hue] = kj_comment_avatar($usrcp->name(), (int) $usrcp->id());
             $tpl->assign('kj_comment_user_initial', $initial);
-            $tpl->assign('kj_comment_user_avatar_style', $avatar_style);
+            $tpl->assign('kj_comment_user_hue', $avatar_hue);
         }
 
         $tpl->assign('kj_comment_list', kj_comment_list_html($kj_comments));
 
-        $footer = $tpl->display('comment', __DIR__) . $args['footer'];
+        $footer = $tpl->display(kj_comment_template(), __DIR__) . $args['footer'];
 
         return compact('footer');
     } ,

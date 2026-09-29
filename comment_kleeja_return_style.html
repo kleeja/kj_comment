@@ -1,0 +1,55 @@
+<!-- kj_comment: comment box of the kleeja return style, comment.js posts and deletes the comments without reloading the page -->
+<section id="kj-comments" class="kj-comments k-reveal k-reveal-4 k-card mt-6 overflow-hidden" aria-labelledby="kj-comments-title"
+    data-confirm-delete="{olang.KJC_DELETE_CONFIRM}" data-error="{lang.ERROR_TRY_AGAIN}"
+    data-alert-success="k-alert k-alert-success" data-alert-danger="k-alert k-alert-danger">
+
+    <header class="flex items-center gap-3 border-b border-line px-5 py-4 sm:px-6">
+        <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-lg text-brand" aria-hidden="true"><i class="icon-messages-square"></i></span>
+        <h2 id="kj-comments-title" class="m-0 text-base font-bold text-fg">{olang.COMNTS}</h2>
+        <span class="k-chip k-chip-brand px-2.5 py-0.5" data-kj-count>{kj_comments_count}</span>
+    </header>
+
+    <div class="border-b border-line bg-sunken/40 px-5 py-5 sm:px-6">
+        <IF NAME="kj_comment_user">
+        <form method="post" action="{kj_comment_add_action}" class="flex items-start gap-3" data-kj-form>
+            <span class="kj-avatar" style="--kj-hue: {kj_comment_user_hue}" aria-hidden="true">{kj_comment_user_initial}</span>
+
+            <div class="min-w-0 flex-1">
+                <label for="kj-comment-text" class="sr-only">{olang.ADD_COMNT}</label>
+                <textarea id="kj-comment-text" name="comment" class="k-input" rows="3" maxlength="{kj_comment_max}" placeholder="{olang.KJC_PLACEHOLDER}" dir="auto" required></textarea>
+
+                <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+                    <span class="text-xs text-faint">
+                        <span class="hidden sm:inline">{olang.KJC_SHORTCUT} &middot; </span><span class="kj-counter" dir="ltr" data-kj-counter>0 / {kj_comment_max}</span>
+                    </span>
+                    <button type="submit" name="submit" value="1" class="k-btn k-btn-primary">
+                        <i class="icon-loader-circle k-spin kj-spinner" aria-hidden="true"></i>
+                        <i class="icon-send kj-submit-icon" aria-hidden="true"></i>
+                        <span>{olang.KJC_SEND}</span>
+                    </button>
+                </div>
+
+                <input type="hidden" name="file_id" value="{kj_comment_file_id}">
+                {kj_comment_form_key}
+            </div>
+        </form>
+        <ELSE>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="m-0 flex items-center gap-2 text-sm text-muted">
+                <i class="icon-message-square-text text-brand" aria-hidden="true"></i>
+                {olang.NO_4_GUEST}
+            </p>
+            <a href="{kj_comment_login_link}" class="k-btn k-btn-primary" rel="nofollow">
+                <i class="icon-log-in" aria-hidden="true"></i>
+                {lang.LOGIN}
+            </a>
+        </div>
+        </IF>
+
+        <div class="kj-status" data-kj-status role="status" aria-live="polite"></div>
+    </div>
+
+    <ul class="m-0 list-none divide-y divide-line p-0" data-kj-list>
+        {kj_comment_list}
+    </ul>
+</section>

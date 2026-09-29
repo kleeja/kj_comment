@@ -46,9 +46,10 @@ if ($num_rows = $SQL->num_rows($all_comments))
 
     while ($cmnt = $SQL->fetch($all_comments))
     {
-        [$cmnt['initial'], $cmnt['avatar_style']] = kj_comment_avatar($cmnt['name'], (int) $cmnt['user']);
+        [$cmnt['initial'], $hue] = kj_comment_avatar($cmnt['name'], (int) $cmnt['user']);
 
-        $cmnt['full_time'] = kleeja_date($cmnt['time'], false);
+        $cmnt['avatar_style'] = "background-color: hsl({$hue}, 70%, 92%); color: hsl({$hue}, 55%, 28%);";
+        $cmnt['full_time']    = kleeja_date($cmnt['time'], false);
         $cmnt['time']      = kleeja_date($cmnt['time']);
         $cmnt['user_link'] = kj_comment_user_link((int) $cmnt['user']);
         $cmnt['file_link'] = $config['siteurl'] . 'do.php?id=' . $cmnt['file_id'] . '#comment-' . $cmnt['id'];

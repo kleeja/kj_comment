@@ -9,9 +9,6 @@ if (! defined('IN_PLUGINS_SYSTEM'))
     exit();
 }
 
-// version of the plugin, also added to the css and js urls to refresh the browser cache
-define('KJ_COMMENT_VERSION', '1.1.0');
-
 // the longest comment that can be posted, in characters
 define('KJ_COMMENT_MAX_LENGTH', 1000);
 
@@ -23,13 +20,31 @@ define('KJ_COMMENT_DEFAULT_STYLE', 'bootstrap');
 
 
 /**
- * every style has its own comment box, that follows its design, in the plugin folder:
- * - comment_{style}_style.html       the box: title, form of a new comment and the list
- * - comment_list_{style}_style.html  the comments of the list, rendered again after every post and delete
- * - comment_{style}_style.css        optional, loaded in the head of the download page
- * comment.js works with all of them, see the data-kj-* attributes it needs at its top
+ * the comment box comes from one of two places:
+ * 1. comment.html in the folder of the selected style, when the style has one, it is rendered alone,
+ *    so a style can give the comments its own design (its stylesheet styles it, the plugin adds only comment.js)
+ * 2. or else the box of the plugin for that style, in the plugin folder:
+ *    - comment_{style}_style.html       the box: title, form of a new comment and the list
+ *    - comment_list_{style}_style.html  the comments of the list
+ *    - comment_{style}_style.css        optional, loaded in the head of the download page
  *
- * the box of the current style, or the style it depends on, or the default one
+ * the box is rendered again after every post and delete, comment.js takes the new list from it,
+ * see the data-kj-* attributes it needs at its top, and the variables in kj_comment_box_html()
+ */
+
+/**
+ * does the selected style have its own comment box, styles/{style}/comment.html
+ * @return bool
+ */
+function kj_comment_style_box(): bool
+{
+    global $THIS_STYLE_PATH_ABS;
+
+    return ! empty($THIS_STYLE_PATH_ABS) && file_exists($THIS_STYLE_PATH_ABS . 'comment.html');
+}
+
+/**
+ * the plugin box for the current style, or the style it depends on, or the default one
  * @return string style name
  */
 function kj_comment_style(): string
@@ -161,7 +176,8 @@ function kj_comment_asset(string $file): string
 }
 
 /**
- * link and script tags of the comment box, for the head of the download page
+ * link and script tags of the comment box, for the head of the download page,
+ * a comment.html of the style is styled by the style itself, so it gets only the script
  * @return string
  */
 function kj_comment_head_code(): string
@@ -169,7 +185,7 @@ function kj_comment_head_code(): string
     $code = '';
     $css  = kj_comment_template() . '.css';
 
-    if (file_exists(__DIR__ . '/' . $css))
+    if (! kj_comment_style_box() && file_exists(__DIR__ . '/' . $css))
     {
         $code .= '<link rel="stylesheet" href="' . kj_comment_asset($css) . '">' . "\n";
     }
@@ -228,7 +244,7 @@ function kj_comment_user_link(int $user_id): string
 }
 
 /**
- * comments of a file, newest first, ready for the comment_list_{style}_style.html templates
+ * comments of a file, newest first, ready for the templates of the comment box
  * @param  int   $file_id
  * @return array
  */
@@ -291,18 +307,54 @@ function kj_comment_assign_forms(): void
 }
 
 /**
- * the comments of the list, the same html for the page and the ajax answers
- * @param  array  $comments
+ * the comment box of a file, the same html for the page and the ajax answers:
+ * comment.html of the selected style when it has one, or else the box of the plugin for the style
+ *
+ * variables of the box, for a comment.html of a style:
+ * - kj_comments                 the comments, newest first, for <LOOP NAME="kj_comments">, every one has
+ *                               id, file_id, name, comment, initial, avatar_hue, user_link, time, full_time,
+ *                               iso_time, is_uploader and can_delete
+ * - kj_comments_count           number of the comments
+ * - kj_comment_user             name of the member, empty for a guest who can not comment
+ * - kj_comment_user_initial     first letter of the name of the member, and kj_comment_user_hue its hue
+ * - kj_comment_file_id          id of the file
+ * - kj_comment_max              the longest comment, in characters
+ * - kj_comment_add_action       action of the form of a new comment
+ * - kj_comment_del_action       action of the delete forms
+ * - kj_comment_form_key         hidden inputs of the csrf key, for every form
+ * - kj_comment_login_link       login link that comes back to the page
+ *
+ * @param  int    $file_id
+ * @param  array  $comments from kj_comment_fetch()
  * @return string
  */
-function kj_comment_list_html(array $comments): string
+function kj_comment_box_html(int $file_id, array $comments): string
 {
-    global $tpl;
+    global $tpl, $usrcp, $config, $THIS_STYLE_PATH_ABS;
+
+    kj_comment_olang_fallback();
+    kj_comment_assign_forms();
 
     $tpl->assign('kj_comments', $comments);
     $tpl->assign('kj_comments_count', count($comments));
+    $tpl->assign('kj_comment_file_id', $file_id);
+    $tpl->assign('kj_comment_max', KJ_COMMENT_MAX_LENGTH);
+    $tpl->assign('kj_comment_user', $usrcp->name());
+    $tpl->assign('kj_comment_login_link', $config['siteurl'] . 'ucp.php?go=login&amp;return=' . urlencode(kleeja_get_page()));
 
-    return $tpl->display(kj_comment_template('list'), __DIR__);
+    [$initial, $hue] = $usrcp->name() ? kj_comment_avatar($usrcp->name(), (int) $usrcp->id()) : ['', 0];
+    $tpl->assign('kj_comment_user_initial', $initial);
+    $tpl->assign('kj_comment_user_hue', $hue);
+
+    if (kj_comment_style_box())
+    {
+        return $tpl->display('comment', $THIS_STYLE_PATH_ABS);
+    }
+
+    // the box of the plugin puts its list in {kj_comment_list}
+    $tpl->assign('kj_comment_list', $tpl->display(kj_comment_template('list'), __DIR__));
+
+    return $tpl->display(kj_comment_template(), __DIR__);
 }
 
 /**

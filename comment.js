@@ -1,9 +1,10 @@
 /*
  * kj_comment: posts and deletes comments without reloading the download page.
- * The server answers with the new list of comments (the comment_list_{style}_style.html of the page) and a new form key.
+ * The server answers with the comment box rendered again (comment.html of the style, or the box of the plugin)
+ * and a new form key, the list of the page is replaced by the list of that box.
  * Without JavaScript the forms are posted as usual and the page is reloaded.
  *
- * It works with the comment box of every style, the box only needs these:
+ * It works with every comment box, a comment.html of a style too, the box only needs these:
  * - #kj-comments                  the box, with
  *     data-confirm-delete         question before deleting a comment
  *     data-error                  message when the server can not be reached
@@ -13,7 +14,7 @@
  * - [data-kj-counter]             optional, "0 / 1000" of the textarea
  * - [data-kj-count]               number of the comments
  * - [data-kj-status]              where the messages are shown
- * - [data-kj-list]                the comments, replaced by the list of every answer
+ * - [data-kj-list]                the comments, replaced by the [data-kj-list] of the box of every answer
  * - [data-kj-comment="id"]        a comment of the list
  * - form[data-kj-delete]          delete form of a comment
  * and the style gives these classes a look:
@@ -74,9 +75,18 @@
         });
     }
 
+    // the answer has the whole box, only its list is taken, a template parses it without loading anything
     function render(data) {
-        if (typeof data.html === 'string') {
-            list.innerHTML = data.html;
+        if (typeof data.box === 'string') {
+            var fresh = document.createElement('template');
+
+            fresh.innerHTML = data.box;
+
+            var freshList = fresh.content.querySelector('[data-kj-list]');
+
+            if (freshList) {
+                list.innerHTML = freshList.innerHTML;
+            }
         }
 
         if (typeof data.count === 'number') {

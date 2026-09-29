@@ -23,7 +23,7 @@ $kleeja_plugin['kj_comment']['information'] = [
     // Who wrote this plugin?
     'plugin_developer' => 'Kleeja Team',
     // This plugin version
-    'plugin_version' => KJ_COMMENT_VERSION,
+    'plugin_version' => '1.1.0',
     // Explain what is this plugin, why should I use it?
     'plugin_description' => [
         'en' => 'Add Comments To Files',
@@ -126,37 +126,21 @@ $kleeja_plugin['kj_comment']['functions'] = [
         return compact('extra');
     },
 
-    // the comment box of the current style, before the footer of the download page
+    // the comment box, comment.html of the style or the box of the plugin, before the footer of the download page
     'print_Saafooter_func' => function ($args) {
-        global $tpl , $usrcp , $config , $kj_comments;
+        global $kj_comments , $kj_comment_file_id;
 
         if (! defined('IN_DOWNLOAD') || ! defined('KJ_COMMENT_DISPLAY'))
         {
             return;
         }
 
-        kj_comment_olang_fallback();
-        kj_comment_assign_forms();
-
-        $tpl->assign('kj_comment_user', $usrcp->name());
-        $tpl->assign('kj_comment_max', KJ_COMMENT_MAX_LENGTH);
-        $tpl->assign('kj_comment_login_link', $config['siteurl'] . 'ucp.php?go=login&amp;return=' . urlencode(kleeja_get_page()));
-
-        if ($usrcp->name())
-        {
-            [$initial, $avatar_hue] = kj_comment_avatar($usrcp->name(), (int) $usrcp->id());
-            $tpl->assign('kj_comment_user_initial', $initial);
-            $tpl->assign('kj_comment_user_hue', $avatar_hue);
-        }
-
-        $tpl->assign('kj_comment_list', kj_comment_list_html($kj_comments));
-
-        $footer = $tpl->display(kj_comment_template(), __DIR__) . $args['footer'];
+        $footer = kj_comment_box_html((int) $kj_comment_file_id, $kj_comments) . $args['footer'];
 
         return compact('footer');
     } ,
 
-    // ucp.php?go=comment&action=add|del, answers comment.js with json, or redirects after a normal post
+    // ucp.php?go=comment&action=add|del, answers comment.js with json and the box rendered again, or redirects after a normal post
     'default_usrcp_page' => function ($args) {
         global $usrcp , $lang , $olang , $SQL , $dbprefix , $config;
 
@@ -223,7 +207,6 @@ $kleeja_plugin['kj_comment']['functions'] = [
 
             if (kj_comment_is_ajax())
             {
-                kj_comment_assign_forms();
                 $comments = kj_comment_fetch($file_id);
 
                 kj_comment_json([
@@ -231,7 +214,7 @@ $kleeja_plugin['kj_comment']['functions'] = [
                     'message' => $olang['KJC_ADDED'],
                     'id'      => $comment_id,
                     'count'   => count($comments),
-                    'html'    => kj_comment_list_html($comments),
+                    'box'     => kj_comment_box_html($file_id, $comments),
                 ]);
             }
 
@@ -256,14 +239,13 @@ $kleeja_plugin['kj_comment']['functions'] = [
 
             if (kj_comment_is_ajax())
             {
-                kj_comment_assign_forms();
                 $comments = kj_comment_fetch($file_id);
 
                 kj_comment_json([
                     'ok'      => true,
                     'message' => $olang['KJC_DELETED'],
                     'count'   => count($comments),
-                    'html'    => kj_comment_list_html($comments),
+                    'box'     => kj_comment_box_html($file_id, $comments),
                 ]);
             }
 

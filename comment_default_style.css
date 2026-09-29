@@ -1,0 +1,409 @@
+/**
+ * kj_comment: the comment box of the default style, under the download page
+ * The same look as the boxes of the style: the panel of #content, the gray and blue title bars,
+ * the blue and red message bars, and the images of styles/default/images.
+ * The style is rtl first and ltr.css turns it, [dir='ltr'] does the same here.
+ * Everything is under .kj-comments, so it wins over the tag rules of the style (a:link, textarea:focus, ...).
+ */
+
+/* the panel sits under #content, in the same column next to the sidebar, with the same size */
+.kj-comments {
+    float: left;
+    clear: left;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 10px 0 0;
+    padding: 10px;
+    background: #f8f8f8;
+    border: 1px solid #c9c9c9;
+    text-align: right;
+}
+
+[dir='ltr'] .kj-comments {
+    float: right;
+    clear: right;
+    text-align: left;
+}
+
+@media (min-width: 992px) {
+    .kj-comments {
+        box-sizing: content-box;
+        width: 70%;
+        padding: 10px 15px;
+        margin: 10px 0 0 10px;
+    }
+
+    [dir='ltr'] .kj-comments {
+        margin: 10px 10px 0 0;
+    }
+}
+
+/* for screen readers only */
+.kj-comments .kj-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* title, like h1.title of the pages */
+.kj-comments .kj-title {
+    margin: 0;
+    padding: 5px 0;
+    font-size: 140%;
+    font-weight: bold;
+    line-height: 1.3;
+    color: #8ec1da;
+}
+
+.kj-comments .kj-count {
+    display: inline-block;
+    min-width: 12px;
+    margin: 0 4px;
+    padding: 1px 7px;
+    font-size: 11px;
+    line-height: 16px;
+    text-align: center;
+    vertical-align: middle;
+    color: #62b4e8;
+    background: #fff;
+    border-top: 1px solid #bed9ed;
+    border-bottom: 1px solid #bed9ed;
+}
+
+.kj-comments .line {
+    margin: 2px 0 10px;
+}
+
+/* avatar: first letter of the name, a light tint and a dark text of the hue of every user (--kj-hue) */
+.kj-comments .kj-avatar {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: hsl(var(--kj-hue, 200) 55% 28%);
+    background: hsl(var(--kj-hue, 200) 70% 92%);
+    border: 1px solid #fff;
+    outline: 1px solid #c7c7c7;
+}
+
+/* the form of a new comment: gray title bar, like the file info of the download page */
+.kj-comments .kj-compose {
+    margin: 0 0 10px;
+}
+
+.kj-comments .kj-tit {
+    padding: 8px 10px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    background: #8c8c8c url('../../styles/default/images/bg_tile.gif') repeat-x bottom;
+    border: 1px solid #727272;
+}
+
+.kj-comments .kj-compose-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #c7c7c7;
+    border-top: 0;
+}
+
+.kj-comments .kj-compose-body > .kj-avatar {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    font-size: 18px;
+}
+
+.kj-comments .kj-compose-field {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.kj-comments textarea {
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+    min-height: 80px;
+    padding: 6px;
+    line-height: 18px;
+    resize: vertical;
+    background: #fff;
+    border: 1px solid #aaa;
+}
+
+.kj-comments textarea:hover {
+    border-color: #888;
+}
+
+.kj-comments textarea:focus {
+    background: #fff;
+    border-color: #62b4e8;
+}
+
+.kj-comments .kj-compose-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.kj-comments .kj-hint {
+    font-size: 11px;
+    color: #888;
+}
+
+.kj-comments .kj-counter.is-limit {
+    font-weight: bold;
+    color: #c00;
+}
+
+/* the blue button of the style, the stripes of the download button on hover */
+.kj-comments .kj-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 18px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    color: #4b4f52;
+    background: #8ec1da;
+    border: 1px solid #fff;
+    outline: 1px solid #8ec1da;
+    cursor: pointer;
+}
+
+.kj-comments .kj-button:hover,
+.kj-comments .kj-button:focus {
+    color: #222;
+    background: #8ec1da url('../../styles/default/images/bg_animated.gif') repeat;
+    outline-color: #62b4e8;
+}
+
+.kj-comments .kj-button:disabled {
+    cursor: default;
+    opacity: 0.6;
+    background-image: none;
+}
+
+/* spin.gif of the style in place of the icon while waiting for the server */
+.kj-comments .kj-spinner,
+.kj-comments .is-busy .kj-submit-icon {
+    display: none;
+}
+
+.kj-comments .is-busy .kj-spinner {
+    display: inline-block;
+}
+
+/* messages, like the info and error bars of the style */
+.kj-comments .kj-msg {
+    min-height: 29px;
+    padding: 8px 46px 8px 12px;
+    font-weight: bold;
+    line-height: 29px;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+}
+
+[dir='ltr'] .kj-comments .kj-msg {
+    padding: 8px 12px 8px 46px;
+    background-position: left 8px center;
+}
+
+.kj-comments .kj-msg-info,
+.kj-comments .kj-msg-success {
+    color: #333;
+    background-color: #bed9ed;
+    background-image: url('../../styles/default/images/info.png');
+    border-top: 3px solid #62b4e8;
+    border-bottom: 3px solid #62b4e8;
+}
+
+.kj-comments .kj-msg-danger {
+    color: #c00;
+    background-color: #e6c0c0;
+    background-image: url('../../styles/default/images/error.png');
+    border-top: 3px solid #de7a7b;
+    border-bottom: 3px solid #de7a7b;
+}
+
+.kj-comments .kj-guest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 0 10px;
+    line-height: 18px;
+}
+
+.kj-comments .kj-status:empty {
+    display: none;
+}
+
+.kj-comments .kj-status .kj-msg {
+    margin: 0 0 10px;
+}
+
+/* a comment: light blue title bar, like the rows of the file info, and a white body */
+.kj-comments .kj-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kj-comments .kj-comment {
+    margin: 0 0 8px;
+    background: #fff;
+    border: 1px solid #c7c7c7;
+    transition: opacity 0.25s ease;
+}
+
+.kj-comments .kj-comment-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    padding: 5px 8px;
+    background: #bed9ed url('../../styles/default/images/headline_bg.png') repeat-x top right;
+    border-bottom: 1px solid #c7c7c7;
+}
+
+.kj-comments .kj-author {
+    font-weight: bold;
+    color: #333;
+}
+
+.kj-comments .kj-author:hover {
+    color: #62b4e8;
+}
+
+.kj-comments .kj-uploader {
+    padding: 0 6px;
+    font-size: 11px;
+    line-height: 16px;
+    color: #4e4e07;
+    background: #fafae7 url('../../styles/default/images/bg_onlineall.gif') repeat-x center left;
+    border: 1px solid #fff;
+    outline: 1px solid #e2e2b8;
+}
+
+.kj-comments .kj-time {
+    font-size: 11px;
+    color: #555;
+}
+
+.kj-comments .kj-delete-form {
+    margin: 0;
+    margin-inline-start: auto;
+}
+
+/* red like the report link of the download page */
+.kj-comments .kj-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: bold;
+    color: #d80000;
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.kj-comments .kj-delete:hover,
+.kj-comments .kj-delete:focus {
+    background: #f9b6c1;
+    border-color: #b14f4f;
+}
+
+/* every line takes its own direction, for comments that mix arabic and english,
+   the lines stay aligned with the page so the text sits under its author */
+.kj-comments .kj-comment-text {
+    padding: 8px 10px;
+    line-height: 18px;
+    white-space: pre-line;
+    unicode-bidi: plaintext;
+    overflow-wrap: anywhere;
+    text-align: right;
+    color: #474747;
+}
+
+[dir='ltr'] .kj-comments .kj-comment-text {
+    text-align: left;
+}
+
+/* a comment linked from elsewhere, one just posted, and one being removed */
+.kj-comments .kj-comment:target {
+    background: #fafae7;
+}
+
+.kj-comments .kj-comment.is-new {
+    animation: kj-comment-new 2.5s ease-out;
+}
+
+.kj-comments .kj-comment.is-removing {
+    opacity: 0;
+}
+
+@keyframes kj-comment-new {
+    from {
+        background-color: #fafae7;
+    }
+
+    to {
+        background-color: #fff;
+    }
+}
+
+.kj-comments .kj-empty {
+    padding: 20px 10px;
+    text-align: center;
+    color: #888;
+    background: #fff;
+    border: 1px dashed #c9c9c9;
+}
+
+.kj-comments .kj-empty img {
+    display: block;
+    margin: 0 auto 6px;
+}
+
+@media (max-width: 575.98px) {
+    .kj-comments .kj-compose-body > .kj-avatar,
+    .kj-comments .kj-shortcut {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kj-comments .kj-comment {
+        transition: none;
+    }
+
+    .kj-comments .kj-comment.is-new {
+        animation: none;
+    }
+}

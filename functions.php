@@ -9,6 +9,9 @@ if (! defined('IN_PLUGINS_SYSTEM'))
     exit();
 }
 
+// version of the plugin, also added to the css and js urls to refresh the browser cache
+define('KJ_COMMENT_VERSION', '1.1.1');
+
 // the longest comment that can be posted, in characters
 define('KJ_COMMENT_MAX_LENGTH', 1000);
 

@@ -6,13 +6,16 @@ if (! defined('IN_ADMIN'))
 }
 
 $stylee     = 'comment_manager';
-$styleePath = dirname(__FILE__);
+$styleePath = __DIR__;
+
+kj_comment_olang_fallback();
 
 $no_results = false;
+$comments   = [];
 
-$comments_query = 
+$comments_query =
     [
-        'SELECT'  => 'c.id , c.user , c.comment , c.file_id , c.time , u.name , f.real_filename',
+        'SELECT'  => 'c.id , c.user , c.comment , c.file_id , c.time , u.name , f.real_filename , f.name AS file_name',
         'FROM'    => $dbprefix . 'comments c',
         'JOINS'   =>
         [
@@ -40,25 +43,25 @@ if ($num_rows = $SQL->num_rows($all_comments))
     $page_nums                  = $Pager->print_nums($linkgoto);
     $comments_query['LIMIT']    = "$start, $perpage";
     $all_comments               = $SQL->build($comments_query);
-    $comments                   = [];
 
     while ($cmnt = $SQL->fetch($all_comments))
     {
-        $cmnt['time']      = kleeja_date($cmnt['time']);
-        $cmnt['user_link'] = $config['siteurl'] . ($config['mod_writer'] ? 'fileuser-' . $cmnt['user'] . '.html' : 'ucp.php?go=fileuser&amp;id=' . $cmnt['user']);
+        [$cmnt['initial'], $hue] = kj_comment_avatar($cmnt['name'], (int) $cmnt['user']);
 
-        if ($cmnt['user'] == $usrcp->id() || $usrcp->group_id() == 1)
-        {
-            $cmnt['del_btn'] = true; // display delete btn if the user is comment auther or admin
-        }
-        $cmnt['comment'] = (strlen($cmnt['comment']) > 40 ? substr($cmnt['comment'], 0, 40) . '...' : $cmnt['comment']);
-        $comments[]      = $cmnt;
+        $cmnt['avatar_style'] = "background-color: hsl({$hue}, 70%, 92%); color: hsl({$hue}, 55%, 28%);";
+        $cmnt['full_time']    = kleeja_date($cmnt['time'], false);
+        $cmnt['time']      = kleeja_date($cmnt['time']);
+        $cmnt['user_link'] = kj_comment_user_link((int) $cmnt['user']);
+        $cmnt['file_link'] = $config['siteurl'] . 'do.php?id=' . $cmnt['file_id'] . '#comment-' . $cmnt['id'];
+        $cmnt['file_name'] = $cmnt['real_filename'] != '' ? $cmnt['real_filename'] : $cmnt['file_name'];
+        $cmnt['excerpt']   = kj_comment_excerpt($cmnt['comment']);
+        $comments[]        = $cmnt;
     }
 }
 else
 {
-	$no_results = true;
+    $no_results = true;
 }
 
-$delFormAction = $config['siteurl'] . 'ucp.php?go=comment&action=del';
-$form_key      = kleeja_add_form_key('comment_for_' . $usrcp->name());
+$delFormAction = $config['siteurl'] . 'ucp.php?go=comment&amp;action=del';
+$form_key      = kleeja_add_form_key(kj_comment_form_name());

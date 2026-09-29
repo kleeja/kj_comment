@@ -1,0 +1,58 @@
+<!-- kj_comment: comment box of the default style, comment.js posts and deletes the comments without reloading the page -->
+<div id="kj-comments" class="kj-comments" role="region" aria-labelledby="kj-comments-title"
+    data-confirm-delete="{olang.KJC_DELETE_CONFIRM}" data-error="{lang.ERROR_TRY_AGAIN}"
+    data-alert-success="kj-msg kj-msg-success" data-alert-danger="kj-msg kj-msg-danger">
+
+    <!-- title -->
+    <h2 class="kj-title" id="kj-comments-title">&#9679; {olang.COMNTS} <span class="kj-count" data-kj-count>{kj_comments_count}</span></h2>
+    <!-- @end-title -->
+
+    <!-- line top -->
+    <div class="line"></div>
+    <!-- @end-line -->
+
+    <IF NAME="kj_comment_user">
+    <!-- new comment -->
+    <form method="post" action="{kj_comment_add_action}" class="kj-compose" data-kj-form>
+        <div class="kj-tit">{olang.ADD_COMNT}</div>
+
+        <div class="kj-compose-body">
+            <span class="kj-avatar" style="--kj-hue: {kj_comment_user_hue}" aria-hidden="true">{kj_comment_user_initial}</span>
+
+            <div class="kj-compose-field">
+                <label for="kj-comment-text" class="kj-hidden">{olang.ADD_COMNT}</label>
+                <textarea id="kj-comment-text" name="comment" rows="4" cols="42" maxlength="{kj_comment_max}" placeholder="{olang.KJC_PLACEHOLDER}" dir="auto" required></textarea>
+
+                <div class="kj-compose-footer">
+                    <span class="kj-hint">
+                        <span class="kj-shortcut">{olang.KJC_SHORTCUT} &middot; </span><span class="kj-counter" dir="ltr" data-kj-counter>0 / {kj_comment_max}</span>
+                    </span>
+                    <button type="submit" name="submit" value="1" class="kj-button">
+                        <img src="{STYLE_PATH}images/spin.gif" class="kj-spinner" alt="" width="16" height="16" />
+                        <span>{olang.KJC_SEND}</span>
+                    </button>
+                </div>
+
+                <input type="hidden" name="file_id" value="{kj_comment_file_id}" />
+                {kj_comment_form_key}
+            </div>
+        </div>
+    </form>
+    <!-- @end-new-comment -->
+    <ELSE>
+    <!-- guests -->
+    <div class="kj-msg kj-msg-info kj-guest">
+        <span>{olang.NO_4_GUEST}</span>
+        <a href="{kj_comment_login_link}" class="kj-button" rel="nofollow">{lang.LOGIN}</a>
+    </div>
+    <!-- @end-guests -->
+    </IF>
+
+    <div class="kj-status" data-kj-status role="status" aria-live="polite"></div>
+
+    <!-- comments -->
+    <ul class="kj-list" data-kj-list>
+        {kj_comment_list}
+    </ul>
+    <!-- @end-comments -->
+</div>

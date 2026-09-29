@@ -1,0 +1,119 @@
+/**
+ * kj_comment: the comment box of the kleeja return style, under the download page
+ * The templates use the tailwind classes and the k-* components of the style, this is only what they can not do.
+ * Colors come from the --k-* tokens of the style, so they follow its light and dark modes.
+ */
+
+/* avatar: first letter of the name, a tint of the hue of every user (--kj-hue) */
+.kj-comments .kj-avatar {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    user-select: none;
+    background-color: hsl(var(--kj-hue, 355) 85% 93%);
+    color: hsl(var(--kj-hue, 355) 60% 32%);
+    box-shadow: 0 0 0 3px var(--k-surface);
+}
+
+:root.dark .kj-comments .kj-avatar {
+    background-color: hsl(var(--kj-hue, 355) 40% 22%);
+    color: hsl(var(--kj-hue, 355) 85% 82%);
+}
+
+/* buttons show a spinner in place of their icon while they wait for the server */
+.kj-comments .kj-spinner,
+.kj-comments .is-busy .kj-submit-icon {
+    display: none;
+}
+
+.kj-comments .is-busy .kj-spinner {
+    display: inline-block;
+}
+
+/* the send arrow points the way of the text */
+[dir='rtl'] .kj-comments .icon-send {
+    transform: scaleX(-1);
+}
+
+.kj-comments .kj-counter.is-limit {
+    color: var(--k-danger);
+}
+
+/* answer of the server after posting or deleting */
+.kj-comments .kj-status:empty {
+    display: none;
+}
+
+.kj-comments .kj-status .k-alert {
+    margin-top: 1rem;
+}
+
+/* every line of a comment takes its own direction, for comments that mix arabic and english,
+   the lines stay aligned with the page so the text sits under its author */
+.kj-comment-text {
+    white-space: pre-line;
+    unicode-bidi: plaintext;
+    text-align: left;
+}
+
+[dir='rtl'] .kj-comment-text {
+    text-align: right;
+}
+
+/* a comment linked from elsewhere, one just posted, and one being removed */
+.kj-comment {
+    transition:
+        opacity 0.25s ease,
+        background-color 0.25s ease;
+}
+
+.kj-comment:target {
+    background-color: var(--k-warn-soft);
+}
+
+.kj-comment.is-new {
+    animation: kj-comment-new 2.5s ease-out;
+}
+
+.kj-comment.is-removing {
+    opacity: 0;
+}
+
+@keyframes kj-comment-new {
+    from {
+        background-color: var(--k-brand-soft);
+    }
+
+    to {
+        background-color: transparent;
+    }
+}
+
+@media (max-width: 639.98px) {
+    .kj-comments .kj-avatar {
+        width: 2.125rem;
+        height: 2.125rem;
+        font-size: 0.9rem;
+    }
+
+    .kj-comments form > .kj-avatar {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kj-comment {
+        transition: none;
+    }
+
+    .kj-comment.is-new {
+        animation: none;
+    }
+}

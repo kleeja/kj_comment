@@ -1,0 +1,31 @@
+<LOOP NAME="kj_comments">
+<li class="kj-comment" id="comment-{{id}}" data-kj-comment="{{id}}">
+    <div class="kj-comment-head">
+        <a href="{{user_link}}" class="kj-avatar" style="--kj-hue: {{avatar_hue}}" tabindex="-1" aria-hidden="true">{{initial}}</a>
+        <a href="{{user_link}}" class="kj-author">{{name}}</a>
+        <IF LOOP="is_uploader"><span class="kj-uploader">{olang.KJC_UPLOADER}</span></IF>
+        <time class="kj-time" datetime="{{iso_time}}" title="{{full_time}}">{{time}}</time>
+
+        <IF LOOP="can_delete">
+        <form method="post" action="{kj_comment_del_action}" class="kj-delete-form" data-kj-delete>
+            <input type="hidden" name="file_id" value="{{file_id}}" />
+            <input type="hidden" name="comment_id" value="{{id}}" />
+            {kj_comment_form_key}
+            <button type="submit" name="del" value="1" class="kj-delete" title="{lang.DELETE}">
+                <img src="{STYLE_PATH}images/spin.gif" class="kj-spinner" alt="" width="16" height="16" />
+                <img src="{STYLE_PATH}images/zl.png" class="kj-submit-icon" alt="" width="16" height="16" />
+                <span>{lang.DELETE}</span>
+            </button>
+        </form>
+        </IF>
+    </div>
+
+    <div class="kj-comment-text" dir="auto">{{comment}}</div>
+</li>
+</LOOP>
+<IF NAME="kj_comments_count"><ELSE>
+<li class="kj-empty">
+    <img src="{STYLE_PATH}images/Smile.png" alt="" width="24" height="24" />
+    <span>{olang.KJC_EMPTY_LIST}</span>
+</li>
+</IF>

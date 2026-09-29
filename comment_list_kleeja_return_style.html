@@ -1,0 +1,34 @@
+<LOOP NAME="kj_comments">
+<li class="kj-comment flex items-start gap-3 px-5 py-4 sm:px-6" id="comment-{{id}}" data-kj-comment="{{id}}">
+    <a href="{{user_link}}" class="kj-avatar" style="--kj-hue: {{avatar_hue}}" tabindex="-1" aria-hidden="true">{{initial}}</a>
+
+    <div class="min-w-0 flex-1">
+        <div class="flex min-h-8 flex-wrap items-center gap-x-2 gap-y-1">
+            <a href="{{user_link}}" class="text-sm font-bold text-fg no-underline transition-colors hover:text-brand">{{name}}</a>
+            <IF LOOP="is_uploader"><span class="k-chip k-chip-brand gap-1 px-2 py-0.5 text-[0.7rem]"><i class="icon-badge-check" aria-hidden="true"></i>{olang.KJC_UPLOADER}</span></IF>
+            <time class="text-xs text-faint" datetime="{{iso_time}}" title="{{full_time}}">{{time}}</time>
+
+            <IF LOOP="can_delete">
+            <form method="post" action="{kj_comment_del_action}" class="ms-auto" data-kj-delete>
+                <input type="hidden" name="file_id" value="{{file_id}}">
+                <input type="hidden" name="comment_id" value="{{id}}">
+                {kj_comment_form_key}
+                <button type="submit" name="del" value="1" class="grid h-8 w-8 cursor-pointer place-items-center rounded-lg border-0 bg-transparent text-faint transition-colors hover:bg-danger-soft hover:text-danger" title="{lang.DELETE}">
+                    <i class="icon-loader-circle k-spin kj-spinner" aria-hidden="true"></i>
+                    <i class="icon-trash-2 kj-submit-icon" aria-hidden="true"></i>
+                    <span class="sr-only">{lang.DELETE}</span>
+                </button>
+            </form>
+            </IF>
+        </div>
+
+        <p class="kj-comment-text k-break m-0 mt-1 text-sm leading-relaxed text-fg-soft" dir="auto">{{comment}}</p>
+    </div>
+</li>
+</LOOP>
+<IF NAME="kj_comments_count"><ELSE>
+<li class="flex flex-col items-center gap-3 px-5 py-10 text-center text-sm text-muted">
+    <span class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-soft text-xl text-brand" aria-hidden="true"><i class="icon-message-square-plus"></i></span>
+    {olang.KJC_EMPTY_LIST}
+</li>
+</IF>

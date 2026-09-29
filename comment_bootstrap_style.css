@@ -1,0 +1,267 @@
+/**
+ * kj_comment: the comment box of the bootstrap style, under the download page
+ * On top of Bootstrap 4 of the bootstrap style, only what its classes do not give.
+ * Logical properties (inline-start/end) keep it right in rtl and ltr.
+ */
+
+.kj-comments {
+    margin-top: 3rem;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.kj-icon {
+    flex-shrink: 0;
+    vertical-align: -0.15em;
+}
+
+/* header: icon, title and the number of comments */
+.kj-comments-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #fff;
+}
+
+.kj-comments-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.kj-comments-count {
+    min-width: 1.75rem;
+    font-size: 0.8rem;
+}
+
+/* avatar: first letter of the name, a light tint and a dark text of the hue of every user (--kj-hue) */
+.kj-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1;
+    text-decoration: none !important;
+    user-select: none;
+    background-color: hsl(var(--kj-hue, 210) 70% 92%);
+    color: hsl(var(--kj-hue, 210) 55% 28%);
+}
+
+/* the form of a new comment */
+.kj-comments-compose {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.kj-compose {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.kj-compose-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.kj-compose textarea {
+    min-height: 5.5rem;
+    resize: vertical;
+}
+
+.kj-compose-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.kj-counter.is-limit {
+    color: #dc3545;
+}
+
+.kj-guest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+/* buttons show a spinner in place of their icon while they wait for the server */
+.kj-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.kj-spinner,
+.is-busy .kj-submit-icon {
+    display: none;
+}
+
+.is-busy .kj-spinner {
+    display: inline-block;
+}
+
+/* the send arrow points the way of the text */
+[dir='rtl'] .kj-send-icon {
+    transform: scaleX(-1);
+}
+
+.kj-delete .kj-spinner {
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+/* answer of the server after posting or deleting */
+.kj-status:empty {
+    display: none;
+}
+
+.kj-status .alert {
+    margin: 0.75rem 0 0;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.9rem;
+}
+
+/* bootstrap 4 resets only padding-left of lists, in rtl the padding of the browser stays on the right */
+.kj-comment-list {
+    margin: 0;
+    padding: 0;
+}
+
+/* a comment */
+.kj-comment {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: opacity 0.25s ease, background-color 0.25s ease;
+}
+
+.kj-comment:target {
+    background-color: #fff8e1;
+}
+
+.kj-comment-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.kj-comment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.5rem;
+    min-height: 1.75rem;
+}
+
+.kj-comment-author {
+    font-weight: 600;
+    color: #212529;
+}
+
+.kj-comment-time {
+    font-size: 0.8125rem;
+    color: #6c757d;
+}
+
+.kj-uploader {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+/* every line of a comment takes its own direction, for comments that mix arabic and english,
+   the lines stay aligned with the page so the text sits under its author */
+.kj-comment-text {
+    margin: 0.2rem 0 0;
+    white-space: pre-line;
+    unicode-bidi: plaintext;
+    overflow-wrap: anywhere;
+    color: #343a40;
+}
+
+.kj-comment-actions {
+    margin-inline-start: auto;
+}
+
+.kj-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: #adb5bd;
+    border-radius: 50%;
+}
+
+.kj-delete:hover,
+.kj-delete:focus {
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.08);
+}
+
+/* a comment that was just posted, and one that is being removed */
+.kj-comment.is-new {
+    animation: kj-comment-new 2.5s ease-out;
+}
+
+.kj-comment.is-removing {
+    opacity: 0;
+}
+
+@keyframes kj-comment-new {
+    from {
+        background-color: rgba(0, 123, 255, 0.12);
+    }
+
+    to {
+        background-color: transparent;
+    }
+}
+
+.kj-comments-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2rem 1rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.kj-comments-empty .kj-icon {
+    opacity: 0.6;
+}
+
+@media (max-width: 575.98px) {
+    .kj-avatar {
+        width: 2.125rem;
+        height: 2.125rem;
+        font-size: 0.95rem;
+    }
+
+    .kj-compose > .kj-avatar {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kj-comment {
+        transition: none;
+    }
+
+    .kj-comment.is-new {
+        animation: none;
+    }
+}

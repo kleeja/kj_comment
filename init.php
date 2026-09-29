@@ -23,7 +23,7 @@ $kleeja_plugin['kj_comment']['information'] = [
     // Who wrote this plugin?
     'plugin_developer' => 'Kleeja Team',
     // This plugin version
-    'plugin_version' => '1.1.0',
+    'plugin_version' => KJ_COMMENT_VERSION,
     // Explain what is this plugin, why should I use it?
     'plugin_description' => [
         'en' => 'Add Comments To Files',

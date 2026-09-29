@@ -1,0 +1,34 @@
+<LOOP NAME="kj_comments">
+<li class="list-group-item kj-comment" id="comment-{{id}}" data-kj-comment="{{id}}">
+    <a href="{{user_link}}" class="kj-avatar" style="{{avatar_style}}" tabindex="-1" aria-hidden="true">{{initial}}</a>
+
+    <div class="kj-comment-body">
+        <div class="kj-comment-meta">
+            <a href="{{user_link}}" class="kj-comment-author">{{name}}</a>
+            <IF LOOP="is_uploader"><span class="badge badge-light kj-uploader">{olang.KJC_UPLOADER}</span></IF>
+            <time class="kj-comment-time" datetime="{{iso_time}}" title="{{full_time}}">{{time}}</time>
+
+            <IF LOOP="can_delete">
+            <form method="post" action="{kj_comment_del_action}" class="kj-comment-actions" data-kj-delete>
+                <input type="hidden" name="file_id" value="{{file_id}}">
+                <input type="hidden" name="comment_id" value="{{id}}">
+                {kj_comment_form_key}
+                <button type="submit" name="del" value="1" class="btn btn-sm kj-delete" title="{lang.DELETE}">
+                    <span class="spinner-border spinner-border-sm kj-spinner" aria-hidden="true"></span>
+                    <svg class="kj-icon kj-submit-icon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4M6.8 6.5v4.5M9.2 6.5v4.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <span class="sr-only">{lang.DELETE}</span>
+                </button>
+            </form>
+            </IF>
+        </div>
+
+        <p class="kj-comment-text" dir="auto">{{comment}}</p>
+    </div>
+</li>
+</LOOP>
+<IF NAME="kj_comments_count"><ELSE>
+<li class="list-group-item kj-comments-empty">
+    <svg class="kj-icon" viewBox="0 0 16 16" width="28" height="28" aria-hidden="true"><path d="M2.5 2.5h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H6l-3.5 3v-3a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/></svg>
+    <span>{olang.KJC_EMPTY_LIST}</span>
+</li>
+</IF>

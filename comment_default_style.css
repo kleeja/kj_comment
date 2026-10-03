@@ -1,131 +1,95 @@
 /**
  * kj_comment: the comment box of the default style, under the download page
- * The same look as the boxes of the style: the panel of #content, the gray and blue title bars,
- * the blue and red message bars, and the images of styles/default/images.
- * The style is rtl first and ltr.css turns it, [dir='ltr'] does the same here.
- * Everything is under .kj-comments, so it wins over the tag rules of the style (a:link, textarea:focus, ...).
+ * Built on the components of the style (.box, .box-title, .btn, .notice, its form fields)
+ * and its tokens (--sky-*, --gray-*, ...), this file only places them and adds what the style has not.
+ * The tokens have fallbacks, for a style that depends on the default one with its own stylesheet.
+ * Like the style, side-aware rules use logical properties, so it works in both directions.
  */
 
-/* the panel sits under #content, in the same column next to the sidebar, with the same size */
+/* a panel like #content, under it in the content column, as far from it as the panels of the column */
 .kj-comments {
-    float: left;
-    clear: left;
-    box-sizing: border-box;
-    width: 100%;
-    margin: 10px 0 0;
-    padding: 10px;
-    background: #f8f8f8;
-    border: 1px solid #c9c9c9;
-    text-align: right;
+    margin-top: 24px;
+    padding: 20px 24px 24px;
+    background: var(--gray-25, #fcfcfc);
+    border: 1px solid #d2d2d2;
+    border-radius: var(--radius, 6px);
+    box-shadow:
+        0 1px 0 #ffffff inset,
+        0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-[dir='ltr'] .kj-comments {
-    float: right;
-    clear: right;
-    text-align: left;
-}
-
-@media (min-width: 992px) {
-    .kj-comments {
-        box-sizing: content-box;
-        width: 70%;
-        padding: 10px 15px;
-        margin: 10px 0 0 10px;
-    }
-
-    [dir='ltr'] .kj-comments {
-        margin: 10px 10px 0 0;
-    }
-}
-
-/* for screen readers only */
-.kj-comments .kj-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
-
-/* title, like h1.title of the pages */
+/* the title, like h1.title of the pages: the bullet and the etched line under it */
 .kj-comments .kj-title {
-    margin: 0;
-    padding: 5px 0;
-    font-size: 140%;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--gray-200, #d8d8d8);
+    box-shadow: 0 1px 0 #ffffff;
+    color: var(--sky-600, #2a76a5);
+    font-size: 1.25rem;
+    font-weight: 700;
     line-height: 1.3;
-    color: #8ec1da;
+}
+
+.kj-comments .kj-title::before {
+    content: "";
+    flex: none;
+    width: 10px;
+    height: 10px;
+    background: var(--sky-400, #8ec1da);
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--sky-150, #dfedf8);
 }
 
 .kj-comments .kj-count {
-    display: inline-block;
-    min-width: 12px;
-    margin: 0 4px;
-    padding: 1px 7px;
-    font-size: 11px;
-    line-height: 16px;
-    text-align: center;
-    vertical-align: middle;
-    color: #62b4e8;
-    background: #fff;
-    border-top: 1px solid #bed9ed;
-    border-bottom: 1px solid #bed9ed;
-}
-
-.kj-comments .line {
-    margin: 2px 0 10px;
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 7px;
+    background: var(--sky-150, #dfedf8);
+    border: 1px solid var(--sky-300, #a9cfe3);
+    border-radius: 11px;
+    color: var(--sky-700, #1f5c82);
+    font-size: 0.75rem;
 }
 
 /* avatar: first letter of the name, a light tint and a dark text of the hue of every user (--kj-hue) */
 .kj-comments .kj-avatar {
-    display: inline-block;
-    flex-shrink: 0;
-    width: 26px;
-    height: 26px;
-    line-height: 26px;
-    font-size: 13px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    color: hsl(var(--kj-hue, 200) 55% 28%);
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    width: 28px;
+    height: 28px;
     background: hsl(var(--kj-hue, 200) 70% 92%);
-    border: 1px solid #fff;
-    outline: 1px solid #c7c7c7;
+    border-radius: var(--radius-sm, 4px);
+    box-shadow:
+        0 0 0 1px #ffffff,
+        0 0 0 2px var(--gray-300, #c9c9c9);
+    color: hsl(var(--kj-hue, 200) 55% 28%);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
 }
 
-/* the form of a new comment: gray title bar, like the file info of the download page */
+/* the form of a new comment, a .box with the gray title bar */
 .kj-comments .kj-compose {
-    margin: 0 0 10px;
-}
-
-.kj-comments .kj-tit {
-    padding: 8px 10px;
-    font-weight: bold;
-    text-align: center;
-    color: #fff;
-    background: #8c8c8c url('../../styles/default/images/bg_tile.gif') repeat-x bottom;
-    border: 1px solid #727272;
+    margin: 0 0 16px;
 }
 
 .kj-comments .kj-compose-body {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 10px;
-    background: #fff;
-    border: 1px solid #c7c7c7;
-    border-top: 0;
+    gap: 14px;
 }
 
 .kj-comments .kj-compose-body > .kj-avatar {
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    font-size: 18px;
+    width: 42px;
+    height: 42px;
+    font-size: 1.125rem;
 }
 
 .kj-comments .kj-compose-field {
@@ -133,25 +97,8 @@
     min-width: 0;
 }
 
-.kj-comments textarea {
-    box-sizing: border-box;
-    display: block;
-    width: 100%;
-    min-height: 80px;
-    padding: 6px;
-    line-height: 18px;
-    resize: vertical;
-    background: #fff;
-    border: 1px solid #aaa;
-}
-
-.kj-comments textarea:hover {
-    border-color: #888;
-}
-
-.kj-comments textarea:focus {
-    background: #fff;
-    border-color: #62b4e8;
+.kj-comments .kj-compose textarea {
+    min-height: 96px;
 }
 
 .kj-comments .kj-compose-footer {
@@ -159,50 +106,18 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .kj-comments .kj-hint {
-    font-size: 11px;
-    color: #888;
+    color: var(--text-muted, #6b7075);
+    font-size: 0.75rem;
 }
 
 .kj-comments .kj-counter.is-limit {
-    font-weight: bold;
-    color: #c00;
-}
-
-/* the blue button of the style, the stripes of the download button on hover */
-.kj-comments .kj-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 18px;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: bold;
-    line-height: 16px;
-    text-decoration: none;
-    white-space: nowrap;
-    color: #4b4f52;
-    background: #8ec1da;
-    border: 1px solid #fff;
-    outline: 1px solid #8ec1da;
-    cursor: pointer;
-}
-
-.kj-comments .kj-button:hover,
-.kj-comments .kj-button:focus {
-    color: #222;
-    background: #8ec1da url('../../styles/default/images/bg_animated.gif') repeat;
-    outline-color: #62b4e8;
-}
-
-.kj-comments .kj-button:disabled {
-    cursor: default;
-    opacity: 0.6;
-    background-image: none;
+    color: var(--red-600, #b3141a);
+    font-weight: 700;
 }
 
 /* spin.gif of the style in place of the icon while waiting for the server */
@@ -215,67 +130,45 @@
     display: inline-block;
 }
 
-/* messages, like the info and error bars of the style */
-.kj-comments .kj-msg {
-    min-height: 29px;
-    padding: 8px 46px 8px 12px;
-    font-weight: bold;
-    line-height: 29px;
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-}
-
-[dir='ltr'] .kj-comments .kj-msg {
-    padding: 8px 12px 8px 46px;
-    background-position: left 8px center;
-}
-
-.kj-comments .kj-msg-info,
-.kj-comments .kj-msg-success {
-    color: #333;
-    background-color: #bed9ed;
-    background-image: url('../../styles/default/images/info.png');
-    border-top: 3px solid #62b4e8;
-    border-bottom: 3px solid #62b4e8;
-}
-
-.kj-comments .kj-msg-danger {
-    color: #c00;
-    background-color: #e6c0c0;
-    background-image: url('../../styles/default/images/error.png');
-    border-top: 3px solid #de7a7b;
-    border-bottom: 3px solid #de7a7b;
-}
-
+/* guests and messages are the .notice of the style, the messages get its info and error pictures */
 .kj-comments .kj-guest {
-    display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    margin: 0 0 10px;
-    line-height: 18px;
+}
+
+.kj-comments .kj-guest .btn {
+    flex: none;
 }
 
 .kj-comments .kj-status:empty {
     display: none;
 }
 
-.kj-comments .kj-status .kj-msg {
-    margin: 0 0 10px;
+.kj-comments .kj-msg {
+    align-items: center;
 }
 
-/* a comment: light blue title bar, like the rows of the file info, and a white body */
+.kj-comments .kj-msg::before {
+    content: "";
+    flex: none;
+    width: 29px;
+    height: 29px;
+    background: url("../../styles/default/images/info.png") no-repeat center / contain;
+}
+
+.kj-comments .kj-msg.notice-error::before {
+    background-image: url("../../styles/default/images/error.png");
+}
+
+/* the comments, every one a .box with a sky title bar, like the rows of the file info */
 .kj-comments .kj-list {
+    display: grid;
+    gap: 12px;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
 .kj-comments .kj-comment {
-    margin: 0 0 8px;
-    background: #fff;
-    border: 1px solid #c7c7c7;
     transition: opacity 0.25s ease;
 }
 
@@ -283,34 +176,37 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 4px 8px;
-    padding: 5px 8px;
-    background: #bed9ed url('../../styles/default/images/headline_bg.png') repeat-x top right;
-    border-bottom: 1px solid #c7c7c7;
+    gap: 4px 10px;
+    padding: 7px 12px;
+    background: var(--sky-200, #bed9ed) url("../../styles/default/images/headline_bg.png") repeat-x right top;
+    background-size: auto 100%;
+    border-bottom: 1px solid var(--sky-300, #a9cfe3);
+    color: var(--sky-ink, #12344a);
 }
 
 .kj-comments .kj-author {
-    font-weight: bold;
-    color: #333;
+    color: var(--sky-ink, #12344a);
+    font-weight: 700;
 }
 
 .kj-comments .kj-author:hover {
-    color: #62b4e8;
+    color: var(--sky-700, #1f5c82);
 }
 
 .kj-comments .kj-uploader {
-    padding: 0 6px;
-    font-size: 11px;
-    line-height: 16px;
-    color: #4e4e07;
-    background: #fafae7 url('../../styles/default/images/bg_onlineall.gif') repeat-x center left;
-    border: 1px solid #fff;
-    outline: 1px solid #e2e2b8;
+    padding: 1px 8px;
+    background: var(--cream-50, #fafae7);
+    border: 1px solid var(--cream-300, #e6e3c3);
+    border-radius: 9px;
+    color: var(--olive-700, #4e4e07);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    line-height: 1.5;
 }
 
 .kj-comments .kj-time {
-    font-size: 11px;
-    color: #555;
+    color: var(--sky-700, #1f5c82);
+    font-size: 0.75rem;
 }
 
 .kj-comments .kj-delete-form {
@@ -322,45 +218,46 @@
 .kj-comments .kj-delete {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 6px;
-    font-family: inherit;
-    font-size: 11px;
-    font-weight: bold;
-    color: #d80000;
+    gap: 5px;
+    height: 26px;
+    padding: 0 8px;
     background: transparent;
     border: 1px solid transparent;
+    border-radius: var(--radius-sm, 4px);
+    color: var(--red-600, #b3141a);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 700;
     cursor: pointer;
 }
 
 .kj-comments .kj-delete:hover,
-.kj-comments .kj-delete:focus {
-    background: #f9b6c1;
-    border-color: #b14f4f;
+.kj-comments .kj-delete:focus-visible {
+    background: var(--pink-100, #f9e5e5);
+    border-color: var(--pink-300, #e3a5a8);
 }
 
 /* every line takes its own direction, for comments that mix arabic and english,
    the lines stay aligned with the page so the text sits under its author */
 .kj-comments .kj-comment-text {
-    padding: 8px 10px;
-    line-height: 18px;
+    padding: 12px 14px;
     white-space: pre-line;
     unicode-bidi: plaintext;
     overflow-wrap: anywhere;
-    text-align: right;
-    color: #474747;
+    text-align: left;
 }
 
-[dir='ltr'] .kj-comments .kj-comment-text {
-    text-align: left;
+[dir="rtl"] .kj-comments .kj-comment-text {
+    text-align: right;
 }
 
 /* a comment linked from elsewhere, one just posted, and one being removed */
 .kj-comments .kj-comment:target {
-    background: #fafae7;
+    border-color: var(--sky-400, #8ec1da);
+    box-shadow: 0 0 0 3px var(--sky-150, #dfedf8);
 }
 
-.kj-comments .kj-comment.is-new {
+.kj-comments .kj-comment.is-new .kj-comment-text {
     animation: kj-comment-new 2.5s ease-out;
 }
 
@@ -370,40 +267,37 @@
 
 @keyframes kj-comment-new {
     from {
-        background-color: #fafae7;
+        background-color: var(--cream-50, #fafae7);
     }
 
     to {
-        background-color: #fff;
+        background-color: #ffffff;
     }
 }
 
 .kj-comments .kj-empty {
-    padding: 20px 10px;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 28px 16px;
+    background: #ffffff;
+    border: 1px dashed var(--gray-300, #c9c9c9);
+    border-radius: var(--radius, 6px);
+    color: var(--text-muted, #6b7075);
     text-align: center;
-    color: #888;
-    background: #fff;
-    border: 1px dashed #c9c9c9;
 }
 
-.kj-comments .kj-empty img {
-    display: block;
-    margin: 0 auto 6px;
+/* the same sizes as #content and the gaps of the column on small screens */
+@media (max-width: 991.98px) {
+    .kj-comments {
+        margin-top: 16px;
+        padding: 16px;
+    }
 }
 
-@media (max-width: 575.98px) {
+@media (max-width: 639.98px) {
     .kj-comments .kj-compose-body > .kj-avatar,
     .kj-comments .kj-shortcut {
         display: none;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .kj-comments .kj-comment {
-        transition: none;
-    }
-
-    .kj-comments .kj-comment.is-new {
-        animation: none;
     }
 }

@@ -1,5 +1,5 @@
 <LOOP NAME="kj_comments">
-<li class="kj-comment" id="comment-{{id}}" data-kj-comment="{{id}}">
+<li class="box kj-comment" id="comment-{{id}}" data-kj-comment="{{id}}">
     <div class="kj-comment-head">
         <a href="{{user_link}}" class="kj-avatar" style="--kj-hue: {{avatar_hue}}" tabindex="-1" aria-hidden="true">{{initial}}</a>
         <a href="{{user_link}}" class="kj-author">{{name}}</a>
@@ -8,12 +8,12 @@
 
         <IF LOOP="can_delete">
         <form method="post" action="{kj_comment_del_action}" class="kj-delete-form" data-kj-delete>
-            <input type="hidden" name="file_id" value="{{file_id}}" />
-            <input type="hidden" name="comment_id" value="{{id}}" />
+            <input type="hidden" name="file_id" value="{{file_id}}">
+            <input type="hidden" name="comment_id" value="{{id}}">
             {kj_comment_form_key}
             <button type="submit" name="del" value="1" class="kj-delete" title="{lang.DELETE}">
-                <img src="{STYLE_PATH}images/spin.gif" class="kj-spinner" alt="" width="16" height="16" />
-                <img src="{STYLE_PATH}images/zl.png" class="kj-submit-icon" alt="" width="16" height="16" />
+                <img src="{STYLE_PATH}images/spin.gif" class="kj-spinner" width="16" height="16" alt="">
+                <svg class="icon kj-submit-icon" aria-hidden="true"><use href="#i-trash"/></svg>
                 <span>{lang.DELETE}</span>
             </button>
         </form>
@@ -25,7 +25,7 @@
 </LOOP>
 <IF NAME="kj_comments_count"><ELSE>
 <li class="kj-empty">
-    <img src="{STYLE_PATH}images/Smile.png" alt="" width="24" height="24" />
+    <img src="{STYLE_PATH}images/Smile.png" width="24" height="24" alt="">
     <span>{olang.KJC_EMPTY_LIST}</span>
 </li>
 </IF>

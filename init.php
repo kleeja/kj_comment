@@ -291,6 +291,81 @@ $kleeja_plugin['kj_comment']['functions'] = [
         return compact('include_alternative');
     },
 
+    //
+    // the comments of a deleted file are deleted with it, see kj_comment_delete_for_files(),
+    // Kleeja deletes files in seven places, each hook below runs before the files are deleted
+    //
+
+    // Files Control, the selected files
+    'submit_files_admin' => function ($args) {
+        kj_comment_delete_for_files((array) ($args['ids'] ?? []));
+    },
+
+    // Images Control, the selected images
+    'submit_imgctrl_admin' => function ($args) {
+        kj_comment_delete_for_files((array) ($args['ids'] ?? []));
+    },
+
+    // the files page of a member, the selected files or all of them
+    'qr_del_files_in_filecp' => function ($args) {
+        kj_comment_delete_for_files((array) ($args['ids'] ?? []));
+    },
+
+    // the deletion link of a file, go.php?go=del
+    'qr_del_file_with_code_del' => function ($args) {
+        kj_comment_delete_for_files([$args['row']['id'] ?? 0]);
+    },
+
+    // the files that nobody downloaded for a while, deleted by the cleanup of Kleeja
+    'qr_del_delf_old_files' => function ($args) {
+        kj_comment_delete_for_files((array) ($args['ids'] ?? []));
+    },
+
+    // Files Control, every file of a search: this has no hook of its own,
+    // so the files are found as c_files.php finds them, before the page deletes them
+    'require_admin_page_begin_c_files' => function ($args) {
+        if (ip('submit') || ! ig('deletefiles'))
+        {
+            return;
+        }
+
+        $filter = get_filter(g('search_id'), 'file_search', false, 'filter_uid');
+
+        if (! $filter)
+        {
+            return;
+        }
+
+        [$where, $bind] = build_search_query(
+            unserialize(htmlspecialchars_decode($filter['filter_value']), ['allowed_classes' => false])
+        );
+
+        if ($where != '')
+        {
+            kj_comment_delete_for_files(kj_comment_file_ids($where, $bind));
+        }
+    },
+
+    // Users & Groups, every file of a member: this has no hook of its own either,
+    // so the checks of g_users.php are made again, before the page deletes the files
+    'require_admin_page_begin_g_users' => function ($args) {
+        global $SQL, $dbprefix;
+
+        if (! ig('deleteuserfile') || ! kleeja_check_form_key_get('adm_users'))
+        {
+            return;
+        }
+
+        $user_id = g('deleteuserfile', 'int');
+
+        if (! $SQL->num_rows($SQL->query("SELECT id FROM {$dbprefix}users WHERE id = :id", ['id' => $user_id])))
+        {
+            return;
+        }
+
+        kj_comment_delete_for_files(kj_comment_file_ids('f.user = :user', ['user' => $user_id]));
+    },
+
     // the guide of the plugin on the help page of the control panel, its words are in language/help_{code}.php
     'admin_help_guides' => function ($args) {
         $help_guides = $args['help_guides'];

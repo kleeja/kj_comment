@@ -31,6 +31,8 @@ return [
         'Members delete their own comments. Members of groups with the <strong>Access Admin control panel</strong> permission delete any comment, on the download page too.',
     'KJ_COMMENT_HELP_FEATURE_6' =>
         '<strong>Comment Manager</strong> lists every comment of the site, newest first and 21 per page, with its author, its file and its time.',
+    'KJ_COMMENT_HELP_FEATURE_7' =>
+        'When a file is deleted, its comments are deleted with it: from the control panel, by its uploader, by its deletion link, or by the cleanup of old files.',
 
     //
     // how to use it

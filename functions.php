@@ -343,6 +343,65 @@ function kj_comment_fetch(int $file_id): array
 }
 
 /**
+ * delete the comments of files that Kleeja is deleting, see the hooks of the deleted files in init.php,
+ * a comment must not outlive its file: the id of a deleted file can be given to the next upload
+ * (SQLite gives the highest id again), and the comments of the old file would show on the new one
+ * @param array $file_ids
+ */
+function kj_comment_delete_for_files(array $file_ids): void
+{
+    global $SQL, $dbprefix;
+
+    $file_ids = array_values(array_unique(array_filter(array_map('intval', $file_ids))));
+
+    if (! sizeof($file_ids))
+    {
+        return;
+    }
+
+    // the files are deleted even if this fails, a missing table of the comments is only written to the log
+    $show_errors      = $SQL->show_errors;
+    $SQL->show_errors = false;
+
+    $SQL->build([
+        'DELETE' => "{$dbprefix}comments",
+        'WHERE'  => 'file_id IN (:ids)',
+        'BIND'   => ['ids' => $file_ids],
+    ]);
+
+    $SQL->show_errors = $show_errors;
+}
+
+/**
+ * ids of the files that a query finds, for the deletions of Kleeja whose hooks don't have the ids
+ * @param  string $where of the files table, as f
+ * @param  array  $bind
+ * @return array
+ */
+function kj_comment_file_ids(string $where, array $bind = []): array
+{
+    global $SQL, $dbprefix;
+
+    $query = $SQL->build([
+        'SELECT' => 'f.id',
+        'FROM'   => "{$dbprefix}files f",
+        'WHERE'  => $where,
+        'BIND'   => $bind,
+    ]);
+
+    $ids = [];
+
+    while ($row = $SQL->fetch($query))
+    {
+        $ids[] = (int) $row['id'];
+    }
+
+    $SQL->freeresult($query);
+
+    return $ids;
+}
+
+/**
  * form actions and a fresh csrf key, used by the templates of the comment box
  */
 function kj_comment_assign_forms(): void

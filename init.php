@@ -30,7 +30,7 @@ $kleeja_plugin['kj_comment']['information'] = [
         'ar' => 'إضافة تعليقات على الملفات'
     ],
     // Min version of Kleeja that's requiered to run this plugin
-    'plugin_kleeja_version_min' => '3.1.4',
+    'plugin_kleeja_version_min' => '4.0.0',
     // Max version of Kleeja that support this plugin, use 0 for unlimited
     'plugin_kleeja_version_max' => '4.9.9',
     // Should this plugin run before others?, 0 is normal, and higher number has high priority

@@ -147,6 +147,51 @@ function kj_comment_olang_fallback(): void
 }
 
 /**
+ * the words of the guide on the help page, in the language of the admin,
+ * a word that the translation misses is shown in English
+ * @return array
+ */
+function kj_comment_help_words(): array
+{
+    global $config;
+
+    $words    = (array) require __DIR__ . '/language/help_en.php';
+    $language = preg_replace('/[^a-z0-9_-]/i', '', (string) ($config['language'] ?? ''));
+    $file     = __DIR__ . '/language/help_' . $language . '.php';
+
+    if ($language !== '' && $language !== 'en' && file_exists($file))
+    {
+        $translated = require $file;
+        $words      = (array) $translated + $words;
+    }
+
+    return $words;
+}
+
+/**
+ * a section of the guide from its numbered words, like KJ_COMMENT_HELP_TIP_1, KJ_COMMENT_HELP_TIP_2 ..
+ * its title, when it has its own, is KJ_COMMENT_HELP_TIP_TITLE
+ * @param  array  $words
+ * @param  string $type  how Kleeja shows it: features, steps, tips, warnings or faq
+ * @param  string $name  the name of its words, KJ_COMMENT_HELP_{name}_1
+ * @return array
+ */
+function kj_comment_help_section(array $words, string $type, string $name): array
+{
+    $prefix  = 'KJ_COMMENT_HELP_' . $name;
+    $section = ['type' => $type, 'title' => $words[$prefix . '_TITLE'] ?? '', 'items' => []];
+
+    for ($n = 1; isset($words[$prefix . ($type == 'faq' ? '_Q_' : '_') . $n]); $n++)
+    {
+        $section['items'][] = $type == 'faq'
+            ? ['q' => $words[$prefix . '_Q_' . $n], 'a' => $words[$prefix . '_A_' . $n] ?? '']
+            : $words[$prefix . '_' . $n];
+    }
+
+    return $section;
+}
+
+/**
  * id of the plugin in the plugins table, the update callback is not given it
  * @return int
  */

@@ -38,13 +38,22 @@ $kleeja_plugin['kj_comment']['information'] = [
 ];
 
 //after installation message, you can remove it, it's not requiered
-$kleeja_plugin['kj_comment']['first_run']['ar'] = '
-مكون إضافي لإضافة تعليقات للملف ، شكرًا لك على استخدام هذه الإضافة <br>
-';
-$kleeja_plugin['kj_comment']['first_run']['en'] = '
-a plugin to add comments for each file , thank you to use this plugin <br>
-Kleeja Team :)
-';
+$kleeja_plugin['kj_comment']['first_run']['ar'] = "
+أضافت هذه الإضافة صندوق تعليقات إلى صفحة تحميل كل ملف، ينشر فيه الأعضاء المسجّلون تعليقاتهم،
+وصفحة «مدير التعليقات» إلى لوحة التحكم، تقرأ فيها تعليقات الموقع كله وتحذف منها ما تريد.
+<br>
+<a href='./index.php?cp=comment_manager'>مدير التعليقات</a> -
+<a href='./index.php?cp=s_help#help-kj_comment'>دليل الإضافة</a> -
+<a href='https://github.com/kleeja/kj_comment/issues' target='_blank' rel='noopener'>الإبلاغ عن مشكلة</a>
+";
+$kleeja_plugin['kj_comment']['first_run']['en'] = "
+This plugin added a comment box to the download page of every file, where signed-in members post their comments,
+and the Comment Manager page to the control panel, where you read and delete the comments of the whole site.
+<br>
+<a href='./index.php?cp=comment_manager'>Comment Manager</a> -
+<a href='./index.php?cp=s_help#help-kj_comment'>Plugin guide</a> -
+<a href='https://github.com/kleeja/kj_comment/issues' target='_blank' rel='noopener'>Report a problem</a>
+";
 
 
 // Plugin Installation function
@@ -280,5 +289,31 @@ $kleeja_plugin['kj_comment']['functions'] = [
         $include_alternative = __DIR__ . '/comment_manager.php';
 
         return compact('include_alternative');
+    },
+
+    // the guide of the plugin on the help page of the control panel, its words are in language/help_{code}.php
+    'admin_help_guides' => function ($args) {
+        $help_guides = $args['help_guides'];
+        $words       = kj_comment_help_words();
+
+        // the name of the plugin is the key, so Kleeja knows that the plugin has its guide, and shows its icon,
+        // and the help button of Comment Manager opens it
+        $help_guides['kj_comment'] = [
+            'group'    => 'plugins',
+            'title'    => $words['KJ_COMMENT_HELP_TITLE'],
+            'intro'    => $words['KJ_COMMENT_HELP_INTRO'],
+            'page'     => 'comment_manager',
+            'link'     => './?cp=comment_manager',
+            // tips and warnings are shown beside the others on wide screens
+            'sections' => [
+                kj_comment_help_section($words, 'features', 'FEATURE'),
+                kj_comment_help_section($words, 'steps', 'STEP'),
+                kj_comment_help_section($words, 'faq', 'FAQ'),
+                kj_comment_help_section($words, 'tips', 'TIP'),
+                kj_comment_help_section($words, 'warnings', 'WARNING'),
+            ],
+        ];
+
+        return compact('help_guides');
     },
 ];

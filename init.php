@@ -153,7 +153,7 @@ $kleeja_plugin['kj_comment']['functions'] = [
     'default_usrcp_page' => function ($args) {
         global $usrcp , $lang , $olang , $SQL , $dbprefix , $config;
 
-        if (g('go') != 'comment')
+        if (g('go') !== 'comment')
         {
             return;
         }
@@ -174,12 +174,12 @@ $kleeja_plugin['kj_comment']['functions'] = [
 
         $file_id = p('file_id', 'int');
 
-        if (g('action') == 'add')
+        if (g('action') === 'add')
         {
             $comment = p('comment');
             $length  = mb_strlen(html_entity_decode($comment, ENT_QUOTES, 'UTF-8'));
 
-            if ($length == 0)
+            if ($length === 0)
             {
                 kj_comment_error($olang['KJC_EMPTY'], 422);
             }
@@ -231,7 +231,7 @@ $kleeja_plugin['kj_comment']['functions'] = [
 
             exit;
         }
-        elseif (g('action') == 'del')
+        elseif (g('action') === 'del')
         {
             $comment_id = p('comment_id', 'int');
 
@@ -340,7 +340,7 @@ $kleeja_plugin['kj_comment']['functions'] = [
             unserialize(htmlspecialchars_decode($filter['filter_value']), ['allowed_classes' => false])
         );
 
-        if ($where != '')
+        if ($where !== '')
         {
             kj_comment_delete_for_files(kj_comment_file_ids($where, $bind));
         }

@@ -181,9 +181,9 @@ function kj_comment_help_section(array $words, string $type, string $name): arra
     $prefix  = 'KJ_COMMENT_HELP_' . $name;
     $section = ['type' => $type, 'title' => $words[$prefix . '_TITLE'] ?? '', 'items' => []];
 
-    for ($n = 1; isset($words[$prefix . ($type == 'faq' ? '_Q_' : '_') . $n]); $n++)
+    for ($n = 1; isset($words[$prefix . ($type === 'faq' ? '_Q_' : '_') . $n]); $n++)
     {
-        $section['items'][] = $type == 'faq'
+        $section['items'][] = $type === 'faq'
             ? ['q' => $words[$prefix . '_Q_' . $n], 'a' => $words[$prefix . '_A_' . $n] ?? '']
             : $words[$prefix . '_' . $n];
     }
@@ -261,7 +261,7 @@ function kj_comment_can_delete(int $author_id): bool
 {
     global $usrcp;
 
-    return $usrcp->name() && ($author_id == $usrcp->id() || user_can('enter_acp'));
+    return $usrcp->name() && ($author_id === (int) $usrcp->id() || user_can('enter_acp'));
 }
 
 /**
@@ -334,7 +334,7 @@ function kj_comment_fetch(int $file_id): array
             'time'         => kleeja_date((int) $row['time']),
             'full_time'    => kleeja_date((int) $row['time'], false),
             'iso_time'     => date('c', (int) $row['time']),
-            'is_uploader'  => (int) $row['file_user'] > 0 && (int) $row['file_user'] == (int) $row['user'],
+            'is_uploader'  => (int) $row['file_user'] > 0 && (int) $row['file_user'] === (int) $row['user'],
             'can_delete'   => kj_comment_can_delete((int) $row['user']),
         ];
     }

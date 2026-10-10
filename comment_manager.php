@@ -53,7 +53,7 @@ if ($num_rows = $SQL->num_rows($all_comments))
         $cmnt['time']      = kleeja_date($cmnt['time']);
         $cmnt['user_link'] = kj_comment_user_link((int) $cmnt['user']);
         $cmnt['file_link'] = $config['siteurl'] . 'do.php?id=' . $cmnt['file_id'] . '#comment-' . $cmnt['id'];
-        $cmnt['file_name'] = $cmnt['real_filename'] != '' ? $cmnt['real_filename'] : $cmnt['file_name'];
+        $cmnt['file_name'] = $cmnt['real_filename'] !== '' ? $cmnt['real_filename'] : $cmnt['file_name'];
         $cmnt['excerpt']   = kj_comment_excerpt($cmnt['comment']);
         $comments[]        = $cmnt;
     }
